@@ -2,6 +2,7 @@ package com.korea.univ.luias;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -25,6 +26,7 @@ public class Main extends ApplicationAdapter {
 	Control_view c_view;
 	
 	BitmapFont font_black;
+	BitmapFont font_black_s;
 	BitmapFont font_red;
 	BitmapFont font_yellow;
 	
@@ -34,11 +36,16 @@ public class Main extends ApplicationAdapter {
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font1.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		
-		parameter.size = 26;
-		parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,/!@#$%^&*()-+=<>;:[]{}`~";
+		parameter.size = 20;
+		parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,/!@#$%^&*()-+=<>;:[]{}`~_";
 		parameter.color = Color.BLACK;
 		
+		font_black_s = fontGenerator.generateFont(parameter);
+		
+		parameter.size = 26;
+		
 		font_black = fontGenerator.generateFont(parameter);
+		
 		
 		parameter.color = Color.RED;
 		
@@ -57,6 +64,10 @@ public class Main extends ApplicationAdapter {
 		h_view = new Half_view();
 		
 		i_view = new Info_view(font_black, font_red, font_yellow);
+		c_view = new Control_view(h_view, font_black, font_black_s);
+		
+		InputMultiplexer mux = new InputMultiplexer(h_view.getStage(),c_view.getStage());
+		Gdx.input.setInputProcessor(mux);
 	}
 
 	@Override
@@ -68,10 +79,12 @@ public class Main extends ApplicationAdapter {
 		f_view.render();
 		h_view.render();
 		i_view.render();
+		c_view.render();
 		
 		f_view.update();
 		h_view.update();
 		i_view.update();
+		c_view.update();
 	}
 	
 	@Override

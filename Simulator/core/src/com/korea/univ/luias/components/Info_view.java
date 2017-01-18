@@ -16,6 +16,7 @@ public class Info_view extends View{
 	SpriteBatch batch;
 	
 	float width = 600, height = 600;
+	
 	Stage stage;
 	
 	public Info_view(BitmapFont ... font){
@@ -32,10 +33,13 @@ public class Info_view extends View{
 		
 		shaperenderer = new ShapeRenderer();
 		stage = new Stage(viewport);
+		
+		
 	}
 	
 	@Override
 	public void update(){
+
 		
 	}
 	
@@ -47,7 +51,7 @@ public class Info_view extends View{
 		
 		batch.begin();
 		
-			black.draw(batch, "Curlling Simulator V 0.1", 7, height-10);
+			black.draw(batch, "Curling Simulator V 0.1", 7, height-10);
 			black.draw(batch, "Team - ", 7, height-90);
 			red.draw(batch, "RED", 7+80, height-90);
 			
@@ -55,8 +59,8 @@ public class Info_view extends View{
 			yellow.draw(batch, "YELLOW", 7+80, height-170);
 			
 			black.draw(batch, "- Current Thrower -",7 + 15, height - 245);
-			//red.draw(batch, "RED", 7+100, height-320);
-			yellow.draw(batch, "YELLOW", 7+78, height-275);
+			red.draw(batch, "RED", 7+100, height-275);
+			//yellow.draw(batch, "YELLOW", 7+78, height-275);
 			
 			black.draw(batch, "Score", 7, height-315);
 		
@@ -127,6 +131,12 @@ public class Info_view extends View{
 				shaperenderer.circle(x, height-215, 12);
 		shaperenderer.end();
 		
+		
+		
+	}
+	
+	public Stage getStage(){
+		return stage;
 	}
 	
 }
