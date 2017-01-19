@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.korea.univ.luias.Main;
 import com.korea.univ.luias.objects.Stone;
 
 public class Half_view extends View{
@@ -34,7 +37,13 @@ public class Half_view extends View{
 	private Stone r_temp;
 	private Stone y_temp;
 	
-	public Half_view(){
+	private boolean isPressed = false;
+	
+	private float power = 0.0f;
+	
+	private Box2DDebugRenderer debug;
+	
+	public Half_view(final World world){
 		
 		camera = new OrthographicCamera();
 		
@@ -52,11 +61,16 @@ public class Half_view extends View{
 		redStone = new Texture(Gdx.files.internal("images/redstone.png"));
 		yellowStone = new Texture(Gdx.files.internal("images/yellowstone.png"));
 		
-		r_temp = new Stone(redStone,null);
+		r_temp = new Stone(redStone);
+		y_temp = new Stone(yellowStone);
 		
-		stage.addActor(r_temp);
 		r_temp.setPosition(1.885f, 1.57f);
 		r_temp.setSize(1, 1);
+		y_temp.setPosition(1.885f, 1.57f);
+		y_temp.setSize(1, 1);
+		
+		stage.addActor(r_temp);
+		stage.addActor(y_temp);
 		
 		stage.addListener(new InputListener(){
 			@Override
@@ -66,13 +80,57 @@ public class Half_view extends View{
 				
 				return true;
 			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,int pointer, int button){
+				
+				if(x >=0 && x <= 5){
+					if(power != 0.0f)
+						power = 0.0f;
+				
+					isPressed = true;
+				}else{
+					return false;
+				}
+				
+				return true;
+			}
+			
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+				
+				if(isPressed){
+					isPressed = false;
+					
+					Main.stones.add(new Stone(world,11.28f,2.135f,Main.current,
+							(Main.current == 0) ? redStone : yellowStone
+							));
+					
+					if(Main.current == 0)
+						Main.rthrowCount ++;
+					else
+						Main.ythrowCount ++;
+					
+					Main.current = Main.current == 0 ? 1 : 0;
+					
+				}
+				
+			}
 		});
 		
-		//stage.addActor(redStone);
+		debug = new Box2DDebugRenderer();
 	}
 	
 	@Override
 	public void update(){
+		
+		if(Main.current == 0){
+			y_temp.setVisible(false);
+			r_temp.setVisible(true);
+		}else{
+			r_temp.setVisible(false);
+			y_temp.setVisible(true);
+		}
 		
 		//x2 - x1
 		float tempX = mouseX - 2.385f;
@@ -97,6 +155,14 @@ public class Half_view extends View{
 		
 		dX[2] = (float)(2.385f + Math.cos(Math.toRadians(angle-10))*1.5f);
 		dY[2] = (float)(2.05f + Math.sin(Math.toRadians(angle-10))*1.5f);
+		
+		if(isPressed){
+			if(power >= 39.8f){
+				power = 39.8f;
+				return;
+			}
+			power += 0.1f;
+		}
 		
 	}
 	
@@ -151,6 +217,8 @@ public class Half_view extends View{
 			
 		shaperenderer.end();
 		
+		
+		
 	}
 	public Stage getStage(){
 		return stage;
@@ -158,5 +226,9 @@ public class Half_view extends View{
 	
 	public float getAngle(){
 		return angle;
+	}
+	
+	public float getPower(){
+		return power;
 	}
 }

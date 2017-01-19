@@ -51,7 +51,7 @@ public class Info_view extends View{
 		
 		batch.begin();
 		
-			black.draw(batch, "Curling Simulator V 0.1", 7, height-10);
+			black.draw(batch, "Curling Simulator V 0.3", 7, height-10);
 			black.draw(batch, "Team - ", 7, height-90);
 			red.draw(batch, "RED", 7+80, height-90);
 			
@@ -59,8 +59,10 @@ public class Info_view extends View{
 			yellow.draw(batch, "YELLOW", 7+80, height-170);
 			
 			black.draw(batch, "- Current Thrower -",7 + 15, height - 245);
-			red.draw(batch, "RED", 7+100, height-275);
-			//yellow.draw(batch, "YELLOW", 7+78, height-275);
+			if(Main.current == 0)
+				red.draw(batch, "RED", 7+100, height-275);
+			else
+				yellow.draw(batch, "YELLOW", 7+78, height-275);
 			
 			black.draw(batch, "Score", 7, height-315);
 		

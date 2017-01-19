@@ -1,0 +1,13 @@
+
+dialog.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+glossy_rectangle_t
+  rotate: false
+  xy: 1, 1
+  size: 500, 238
+  split: 31, 32, 21, 22
+  orig: 500, 238
+  offset: 0, 0
+  index: -1

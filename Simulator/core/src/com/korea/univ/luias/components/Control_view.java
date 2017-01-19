@@ -99,23 +99,30 @@ public class Control_view extends View{
 			
 			font_s.draw(batch, "Power", 7 , height - 180);
 			
+			font_s.draw(batch, "0" , 7, height - 220);
+			font_s.draw(batch, "100" , 95, height - 220);
+			font_s.draw(batch, "M" , 145, height - 220);
+			
+			
 		batch.end();
 		
-		
-		
-		shaperenderer.begin(ShapeType.Line);
-		
-			shaperenderer.setColor(Color.BLACK);
-			shaperenderer.rect(7, height-218, 150,20);
-		
-		shaperenderer.end();
 		
 		shaperenderer.begin(ShapeType.Filled);
 		
 			shaperenderer.setColor(Color.CHARTREUSE);
 			shaperenderer.rect(7.1f,height-217.5f,100,19.8f);
-			
+		
 		shaperenderer.end();
+		
+		shaperenderer.begin(ShapeType.Line);
+		
+			shaperenderer.setColor(Color.BLACK);
+			shaperenderer.rect(7, height-218, 150,20);
+			shaperenderer.rect(7, height-218, 100,20);
+		
+		shaperenderer.end();
+		
+		
 		
 		batch.begin();
 		
@@ -127,22 +134,32 @@ public class Control_view extends View{
 			font_s.draw(batch, "Curl", 7, height - 380);
 			
 			font_s.draw(batch, "Power", 7, height - 450);
+			
+			font_s.draw(batch, "0" , 7, height - 491f);
+			font_s.draw(batch, "100" , 95, height - 491f);
+			font_s.draw(batch, "M" , 145, height - 491f);
 		
 		batch.end();
 		
+		shaperenderer.begin(ShapeType.Filled);
+		
+		shaperenderer.setColor(Color.CHARTREUSE);
+		
+		float power = (h_view.getPower()/40)*150;
+		
+		
+		shaperenderer.rect(7.1f,height-489.5f,power,19.8f);
+	
+	shaperenderer.end();
 		shaperenderer.begin(ShapeType.Line);
 		
 			shaperenderer.setColor(Color.BLACK);
 			shaperenderer.rect(7, height-490, 150,20);
+			shaperenderer.rect(7, height-490, 100,20);
 	
 		shaperenderer.end();
 	
-		shaperenderer.begin(ShapeType.Filled);
-	
-			shaperenderer.setColor(Color.CHARTREUSE);
-			shaperenderer.rect(7.1f,height-489.5f,1,19.8f);
 		
-		shaperenderer.end();
 		
 		stage.draw();
 	}
