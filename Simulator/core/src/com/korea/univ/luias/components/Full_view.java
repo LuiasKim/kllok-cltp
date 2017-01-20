@@ -6,7 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.korea.univ.luias.Main;
+import com.korea.univ.luias.objects.Wall;
+import com.korea.univ.luias.objects.Wall.Wall_Type;
 
 public class Full_view extends View{
 	
@@ -16,22 +22,51 @@ public class Full_view extends View{
 	private float w_offset = 2.745f;
 	private float h_offset = 22.865f;
 	
-	public Full_view(){
+	private Box2DDebugRenderer debug;
+	private World world;
+	
+	private Stage stage;
+	
+	public Full_view(World world){
 		camera = new OrthographicCamera();
 		
 		viewport = new FitViewport(width, height,camera);
 		viewport.apply();
 		
+		stage = new Stage(viewport);
+		
 		camera.position.set(width/2,45f,0);
-		//camera.position.set(camera.viewportWidth/2,camera.viewportHeight/2,0);
+		
+		camera.zoom = 0.9f;
+		
+		
+		
 		
 		shaperenderer = new ShapeRenderer();
 		
-		camera.zoom = 0.9f;
+		
+
+		
+		
+		this.world = world;
+		
+		//create wall ---------------------------------------
+		
+		Main.walls.add(new Wall(world,width,0.1f,width/2,(height-4.57f)/2 ,Wall_Type.TYPE_BOTTOM));
+		Main.walls.add(new Wall(world,width,0.1f,width/2,((height-4.57f)/2)+4.57f  ,Wall_Type.TYPE_TOP));
+		Main.walls.add(new Wall(world,0.1f,2.135f,5.53f,height/2  ,Wall_Type.TYPE_LEFT));
+		Main.walls.add(new Wall(world,0.1f,2.135f,width-5.53f,height/2  ,Wall_Type.TYPE_RIGHT));
+		
+		//---------------------------------------------------
+		
+		debug = new Box2DDebugRenderer();
 	}
 	
 	@Override
 	public void update(){
+		
+		if(Main.stones.size() > 0)
+			stage.addActor(Main.stones.get(Main.total-1));
 		
 	}
 	
@@ -39,6 +74,7 @@ public class Full_view extends View{
 	public void render(){
 		camera.update();
 		shaperenderer.setProjectionMatrix(camera.combined);
+		
 	
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -87,6 +123,21 @@ public class Full_view extends View{
 			shaperenderer.setColor(new Color(1,1,1,0.9f));
 			shaperenderer.circle(width-(w_offset+4.88f), h_offset+2.135f, 0.15f,100);
 		shaperenderer.end();
+		
+		shaperenderer.begin(ShapeType.Line);
+			shaperenderer.setColor(Color.BLACK);
+			shaperenderer.line(w_offset+3.05f, h_offset,w_offset+3.05f,h_offset+4.27f);
+			shaperenderer.line(w_offset+4.88f, h_offset,w_offset+4.88f,h_offset+4.28f);
+			shaperenderer.line(w_offset+11.28f, h_offset,w_offset+11.28f,h_offset+4.28f);
+			shaperenderer.line(w_offset+33.23f, h_offset,w_offset+33.23f,h_offset+4.28f);
+			shaperenderer.line(w_offset+39.63f, h_offset,w_offset+39.63f,h_offset+4.28f);
+			shaperenderer.line(w_offset+41.46f, h_offset,w_offset+41.46f,h_offset+4.28f);
+			shaperenderer.line(w_offset+4.88f, h_offset+2.135f,w_offset+41.46f,h_offset+2.135f);
+			
+		shaperenderer.end();
+		stage.draw();
+		
+		debug.render(world, camera.combined);
 		
 	}
 	

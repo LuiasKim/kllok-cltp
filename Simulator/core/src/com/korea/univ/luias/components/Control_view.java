@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -30,8 +32,10 @@ public class Control_view extends View{
 	private TextButton[] buttons;
 	private TextureRegionDrawable textures[];
 	
+	private int curl;
+	
 	private String btText[] = {
-			"Inner","Non","Outer"
+			"Left","Non","Right"
 	};
 	
 	public Control_view(Half_view h_view,BitmapFont ... fonts){
@@ -67,6 +71,28 @@ public class Control_view extends View{
 			buttons[i].setPosition(x, height - 435);
 			stage.addActor(buttons[i]);
 		}
+		
+		buttons[0].addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				curl = 1;
+				return true;
+			}
+		});
+		buttons[1].addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				curl = 0;
+				return true;
+			}
+		});
+		buttons[2].addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				curl = -1;
+				return true;
+			}
+		});
 		
 		
 	}
@@ -166,6 +192,10 @@ public class Control_view extends View{
 	
 	public Stage getStage(){
 		return stage;
+	}
+	
+	public int getCurl(){
+		return curl;
 	}
 	
 }

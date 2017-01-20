@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -38,12 +38,11 @@ public class Half_view extends View{
 	private Stone y_temp;
 	
 	private boolean isPressed = false;
+	private SpriteBatch batch;
 	
 	private float power = 0.0f;
-	
-	private Box2DDebugRenderer debug;
-	
-	public Half_view(final World world){
+	private Control_view c_view;
+	public Half_view(final World world, Texture redStone, Texture yellowStone){
 		
 		camera = new OrthographicCamera();
 		
@@ -54,12 +53,12 @@ public class Half_view extends View{
 		camera.position.set(width/25, 6.125f ,0);
 		
 		shaperenderer = new ShapeRenderer();
-		
+		batch = new SpriteBatch();
 		
 		camera.zoom = 0.4f;
 	
-		redStone = new Texture(Gdx.files.internal("images/redstone.png"));
-		yellowStone = new Texture(Gdx.files.internal("images/yellowstone.png"));
+		this.redStone = redStone;
+		this.yellowStone = yellowStone;
 		
 		r_temp = new Stone(redStone);
 		y_temp = new Stone(yellowStone);
@@ -102,23 +101,30 @@ public class Half_view extends View{
 				if(isPressed){
 					isPressed = false;
 					
-					Main.stones.add(new Stone(world,11.28f,2.135f,Main.current,
-							(Main.current == 0) ? redStone : yellowStone
-							));
+					Main.stones.add(new Stone(
+							world,14.025f,25f,
+							Main.current,(Main.current == 0) ? Half_view.this.redStone : Half_view.this.yellowStone,power,(int)angle,c_view.getCurl(),0.6f,0.6f));
 					
 					if(Main.current == 0)
 						Main.rthrowCount ++;
 					else
 						Main.ythrowCount ++;
 					
+					
+					
 					Main.current = Main.current == 0 ? 1 : 0;
+					
+					
 					
 				}
 				
 			}
 		});
 		
-		debug = new Box2DDebugRenderer();
+	}
+	
+	public void setC_view(Control_view c_view){
+		this.c_view = c_view;
 	}
 	
 	@Override
@@ -163,7 +169,19 @@ public class Half_view extends View{
 			}
 			power += 0.1f;
 		}
-		
+		/*
+		if(Main.stones.size() > 0){
+			for(Stone s : Main.stones){
+				if(s.getX() > 29.27f){
+					stage.addActor(new Stone(s.getTexture(),s.getY(),s.getX(),0.8f,0.8f));
+				}
+				for(int i = 0; i < stage.getActors().size; i++){
+					Stone st = (Stone)stage.getActors().get(i);
+					
+				}
+			}
+		}
+		*/
 	}
 	
 	@Override
@@ -195,16 +213,25 @@ public class Half_view extends View{
 			//circle upper
 		shaperenderer.begin(ShapeType.Filled);
 			shaperenderer.setColor(new Color(0,0,1,0.65f));
-			shaperenderer.circle(2.385f, ground_height-(+1.83f), 1.83f,100);
+			shaperenderer.circle(2.385f, ground_height-(+1.58f), 1.83f,100);
 			shaperenderer.setColor(new Color(1,1,1,0.9f));
-			shaperenderer.circle(2.385f, ground_height-(+1.83f), 1.22f,100);
+			shaperenderer.circle(2.385f, ground_height-(+1.58f), 1.22f,100);
 			shaperenderer.setColor(new Color(1,0,0,0.65f));
-			shaperenderer.circle(2.385f, ground_height-(+1.83f), 0.61f,100);
+			shaperenderer.circle(2.385f, ground_height-(+1.58f), 0.61f,100);
 			shaperenderer.setColor(new Color(1,1,1,0.9f));
-			shaperenderer.circle(2.385f, ground_height-(+1.83f), 0.15f,100);
+			shaperenderer.circle(2.385f, ground_height-(+1.58f), 0.15f,100);
 		shaperenderer.end();
 		
 		//shoot rendering
+		
+		shaperenderer.begin(ShapeType.Line);
+			shaperenderer.setColor(Color.BLACK);
+			shaperenderer.line(0.25f, ground_height-1.58f, 4.52f, ground_height-1.58f);
+			shaperenderer.line(0.25f, ground_height+0.25f, 4.52f, ground_height+0.25f);
+			shaperenderer.line(2.385f, ground_height-1.58f, 2.385f, 0.25f);
+			
+		
+		shaperenderer.end();
 		
 		stage.draw();
 		
@@ -217,6 +244,14 @@ public class Half_view extends View{
 			
 		shaperenderer.end();
 		
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		for(Stone s : Main.stones){
+			if(s.getX() >44.51f-ground_height)
+				batch.draw(s.getTexture(), (s.getY()-25.25f)+2.385f, ground_height-(44.26f-s.getX()), 0.6f,0.6f);
+			
+		}
+		batch.end();
 		
 		
 	}
