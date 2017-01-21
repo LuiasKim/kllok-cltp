@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -22,8 +21,6 @@ public class Full_view extends View{
 	private float w_offset = 2.745f;
 	private float h_offset = 22.865f;
 	
-	private Box2DDebugRenderer debug;
-	private World world;
 	
 	private Stage stage;
 	
@@ -39,16 +36,7 @@ public class Full_view extends View{
 		
 		camera.zoom = 0.9f;
 		
-		
-		
-		
-		shaperenderer = new ShapeRenderer();
-		
-		
-
-		
-		
-		this.world = world;
+		shaperenderer = new ShapeRenderer();	
 		
 		//create wall ---------------------------------------
 		
@@ -58,8 +46,6 @@ public class Full_view extends View{
 		Main.walls.add(new Wall(world,0.1f,2.135f,width-5.53f,height/2  ,Wall_Type.TYPE_RIGHT));
 		
 		//---------------------------------------------------
-		
-		debug = new Box2DDebugRenderer();
 	}
 	
 	@Override
@@ -136,8 +122,6 @@ public class Full_view extends View{
 			
 		shaperenderer.end();
 		stage.draw();
-		
-		debug.render(world, camera.combined);
 		
 	}
 	

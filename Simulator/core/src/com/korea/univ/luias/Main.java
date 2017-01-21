@@ -11,24 +11,29 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactFilter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.korea.univ.luias.components.Control_view;
 import com.korea.univ.luias.components.Full_view;
 import com.korea.univ.luias.components.Half_view;
 import com.korea.univ.luias.components.Info_view;
 import com.korea.univ.luias.components.TeamDialog;
+import com.korea.univ.luias.components.system.GameController;
 import com.korea.univ.luias.objects.Stone;
 import com.korea.univ.luias.objects.Wall;
 
 public class Main extends ApplicationAdapter {
 
 	public static int rthrowCount = 0, ythrowCount = 0, total = 0;
-	public static int userTeam = -1;
+	public static int userTeam = -1, end = 1;
 	public static int current = 1;
 	public static boolean isStarted = false;
 
 	public static ArrayList<Wall> walls = new ArrayList<Wall>();
 	public static ArrayList<Stone> stones = new ArrayList<Stone>();
+	
+	public static int[][] scoreBoard = new int[2][10];
 
 	public Half_view h_view;
 	public Full_view f_view;
@@ -51,6 +56,7 @@ public class Main extends ApplicationAdapter {
 	@Override
 	public void create() {
 		try {
+					
 			FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font1.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
@@ -93,7 +99,7 @@ public class Main extends ApplicationAdapter {
 		t_dialog = new TeamDialog(this, font_black, font_red, font_yellow);
 
 		Gdx.input.setInputProcessor(t_dialog.getStage());
-		/*
+		
 		world.setContactFilter(new ContactFilter() {
 
 			@Override
@@ -145,9 +151,8 @@ public class Main extends ApplicationAdapter {
 				return true;
 			}
 		});
-		*/
 		
-		
+		GameController.getInstance().resetScore();
 	}
 
 	@Override
@@ -169,6 +174,8 @@ public class Main extends ApplicationAdapter {
 		i_view.update();
 		c_view.update();
 		t_dialog.update();
+		
+		GameController.getInstance().checkGameStatus();
 	}
 
 	@Override
