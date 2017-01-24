@@ -69,6 +69,7 @@ public class TeamDialog extends View{
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				buttons[1].setChecked(false);
 				Main.userTeam = 0;
+				Main.current = 0;
 				return true;
 			}
 		});
@@ -80,6 +81,7 @@ public class TeamDialog extends View{
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				buttons[0].setChecked(false);
 				Main.userTeam = 1;
+				Main.current = 1;
 				return true;
 			}
 		});

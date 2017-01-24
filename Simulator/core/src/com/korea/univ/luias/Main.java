@@ -40,6 +40,8 @@ public class Main extends ApplicationAdapter {
 
 	public Info_view i_view;
 	public Control_view c_view;
+	
+	public GameController controller;
 
 	public TeamDialog t_dialog;
 
@@ -97,6 +99,8 @@ public class Main extends ApplicationAdapter {
 		h_view.setC_view(c_view);
 		
 		t_dialog = new TeamDialog(this, font_black, font_red, font_yellow);
+		
+		controller = new GameController();
 
 		Gdx.input.setInputProcessor(t_dialog.getStage());
 		
@@ -152,7 +156,7 @@ public class Main extends ApplicationAdapter {
 			}
 		});
 		
-		GameController.getInstance().resetScore();
+		controller.resetScore();
 	}
 
 	@Override
@@ -161,7 +165,6 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		world.step(1 / 60f, 6, 2);
-		total = rthrowCount + ythrowCount;
 		
 		f_view.render();
 		h_view.render();
@@ -175,7 +178,7 @@ public class Main extends ApplicationAdapter {
 		c_view.update();
 		t_dialog.update();
 		
-		GameController.getInstance().checkGameStatus();
+		controller.checkGameStatus(world,i_view.getStones(),h_view.getStones());
 	}
 
 	@Override

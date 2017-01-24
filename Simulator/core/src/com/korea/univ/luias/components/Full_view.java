@@ -66,10 +66,17 @@ public class Full_view extends View{
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
 		//background
+		
 		shaperenderer.begin(ShapeType.Filled);
 			shaperenderer.setColor(new Color(0,0,0,0.9f));
-			shaperenderer.rect((width-46.51f)/2, (height-5.27f)/2, 46.51f, 5.27f);
-		
+			//shaperenderer.rect((width-46.51f)/2, (height-5.27f)/2, 46.51f, 5.27f);
+			shaperenderer.rectLine(((width-46.51f)/2), (height-h_offset-4.57f),47.51f,(height-h_offset-4.57f), 0.25f);
+			shaperenderer.rectLine(((width-46.51f)/2), (height-h_offset+0.5f),47.51f,(height-h_offset+0.5f), 0.25f);
+			shaperenderer.rectLine(w_offset-0.15f, (height-h_offset-4.57f),w_offset-0.15f,(height-h_offset+0.5f), 0.25f);
+			shaperenderer.rectLine(47.46f, (height-h_offset-4.57f),47.46f,(height-h_offset+0.5f), 0.25f);
+		shaperenderer.end();
+			
+		shaperenderer.begin(ShapeType.Filled);
 			shaperenderer.setColor(new Color(1,1,1,0.9f));
 			shaperenderer.rect((width-44.51f)/2, (height-4.27f)/2, 44.51f, 4.27f);
 		shaperenderer.end();
@@ -116,9 +123,9 @@ public class Full_view extends View{
 			shaperenderer.line(w_offset+4.88f, h_offset,w_offset+4.88f,h_offset+4.28f);
 			shaperenderer.line(w_offset+11.28f, h_offset,w_offset+11.28f,h_offset+4.28f);
 			shaperenderer.line(w_offset+33.23f, h_offset,w_offset+33.23f,h_offset+4.28f);
-			shaperenderer.line(w_offset+39.63f, h_offset,w_offset+39.63f,h_offset+4.28f);
+			shaperenderer.line(w_offset+39.63f, h_offset,w_offset+39.63f,h_offset+4.28f);//----------
 			shaperenderer.line(w_offset+41.46f, h_offset,w_offset+41.46f,h_offset+4.28f);
-			shaperenderer.line(w_offset+4.88f, h_offset+2.135f,w_offset+41.46f,h_offset+2.135f);
+			shaperenderer.line(w_offset+4.88f, h_offset+2.135f,w_offset+41.46f,h_offset+2.135f); //----------
 			
 		shaperenderer.end();
 		stage.draw();

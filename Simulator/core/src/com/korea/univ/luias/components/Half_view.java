@@ -118,12 +118,14 @@ public class Half_view extends View {
 
 					Main.stones.add(new Stone(world, 14.025f, 25f, Main.current,
 							(Main.current == 0) ? Half_view.this.redStone : Half_view.this.yellowStone, power,
-							(int) angle, c_view.getCurl(), 0.6f, 0.6f, Main.total + 1));
+							(int) angle, c_view.getCurl(), 0.3f, 0.3f, Main.total + 1));
 
 					if (Main.current == 0)
 						Main.rthrowCount++;
 					else
 						Main.ythrowCount++;
+					
+					Main.total ++;
 
 					Main.current = Main.current == 0 ? 1 : 0;
 
@@ -205,7 +207,7 @@ public class Half_view extends View {
 
 			if (stones.size < 1)
 				stones.add(new Stone(s.getTexture(), 4.27f - (s.getY() - 22.915f), ground_height - (44.26f - s.getX()),
-						0.6f, 0.6f, s.getNum()));
+						0.3f, 0.3f, s.getNum()));
 
 			for (int j = 0; j < this.stones.size; j++) {
 				Stone s2 = this.stones.get(j);
@@ -229,6 +231,15 @@ public class Half_view extends View {
 		}
 		for (Stone s : stones)
 			stage.addActor(s);
+		
+		if(!Main.isStarted){
+			if(Main.stones.size() < 1){
+				for(int i = 0; i < stones.size; i++)
+					stones.get(i).remove();
+				
+				stones.clear();
+			}
+		}
 
 	}
 
@@ -242,10 +253,17 @@ public class Half_view extends View {
 
 		// background
 
+		
 		shaperenderer.begin(ShapeType.Filled);
 		shaperenderer.setColor(new Color(0, 0, 0, 0.9f));
-		shaperenderer.rect(0, 0, 4.77f, ground_height + 0.5f);
-
+		shaperenderer.rectLine(0, 0.125f, 4.77f, 0.125f, 0.125f);
+		shaperenderer.rectLine(0, 0.125f, 0, ground_height + 0.35f, 0.125f);
+		shaperenderer.rectLine(0, ground_height+0.30f, 4.77f, ground_height+0.30f, 0.125f);
+		shaperenderer.rectLine(4.77f, 0.125f, 4.77f, ground_height + 0.35f, 0.125f);
+		//(0, 0, 4.77f, ground_height + 0.5f);
+		shaperenderer.end();
+		
+		shaperenderer.begin(ShapeType.Filled);
 		shaperenderer.setColor(new Color(1, 1, 1, 0.9f));
 		shaperenderer.rect(0.25f, 0.25f, 4.27f, ground_height);
 		shaperenderer.end();
@@ -322,5 +340,9 @@ public class Half_view extends View {
 
 	public float getPower() {
 		return power;
+	}
+	
+	public Array <Stone> getStones(){
+		return stones;
 	}
 }

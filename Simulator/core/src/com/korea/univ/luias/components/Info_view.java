@@ -23,8 +23,7 @@ public class Info_view extends View {
 
 	float width = 600, height = 600;
 
-	private ArrayList<Stone> rCount = new ArrayList<Stone>();
-	private ArrayList<Stone> yCount = new ArrayList<Stone>();
+	private ArrayList<Stone> stones = new ArrayList<Stone>();
 
 	Stage stage;
 
@@ -46,18 +45,20 @@ public class Info_view extends View {
 		float x = 8 + 10;
 		for (int i = 0; i < 8; i++, x += 26) {
 			Stone r = new Stone(redStone);
-			Stone y = new Stone(yellowStone);
 			r.setPosition(x, height - 135);
-			y.setPosition(x, height - 215);
-
 			r.setSize(24, 24);
-			y.setSize(24, 24);
-
 			stage.addActor(r);
+			stones.add(r);
+		}
+		
+		x = 8 + 10;
+		
+		for(int i = 0; i < 8; i++, x+= 26){
+			Stone y = new Stone(yellowStone);
+			y.setPosition(x, height - 215);
+			y.setSize(24, 24);
 			stage.addActor(y);
-			
-			rCount.add(r);
-			yCount.add(y);
+			stones.add(y);
 		}
 
 	}
@@ -66,11 +67,11 @@ public class Info_view extends View {
 	public void update() {
 
 		for(int i = 0; i < Main.rthrowCount; i++){
-			rCount.get(rCount.size()-Main.rthrowCount).setVisible(false);
+			stones.get(8-Main.rthrowCount).setVisible(false);
 		}
 		
 		for(int i = 0; i < Main.ythrowCount; i++){
-			yCount.get(yCount.size()-Main.ythrowCount).setVisible(false);
+			stones.get(16-Main.ythrowCount).setVisible(false);
 		}
 
 	}
@@ -142,10 +143,27 @@ public class Info_view extends View {
 		// 1~8 round
 		red.draw(batch, "R", 13, height - 368);
 		yellow.draw(batch, "Y", 13, height - 402);
+		x = 13 + 38;
+		for (int i = 0; i < 5; i++, x += 38){
+			if(Main.scoreBoard[0][i] == -1)
+				break;
+			
+			black.draw(batch, String.valueOf(Main.scoreBoard[0][i]), x, height - 368);
+			black.draw(batch, String.valueOf(Main.scoreBoard[1][i]), x, height - 402);
+
+		}
 
 		// 9~16 round
 		red.draw(batch, "R", 13, height - 458);
 		yellow.draw(batch, "Y", 13, height - 492);
+		x = 13+38;
+		for (int i = 5; i < 10; i++, x += 38){
+			if(Main.scoreBoard[0][i] == -1)
+				break;
+			
+			black.draw(batch, String.valueOf(Main.scoreBoard[0][i]), x, height - 458);
+			black.draw(batch, String.valueOf(Main.scoreBoard[1][i]), x, height - 492);
+		}
 
 		batch.end();
 
@@ -155,6 +173,10 @@ public class Info_view extends View {
 
 	public Stage getStage() {
 		return stage;
+	}
+	
+	public ArrayList <Stone> getStones(){
+		return stones;
 	}
 
 }
