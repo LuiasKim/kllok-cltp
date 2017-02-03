@@ -11,14 +11,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.ContactFilter;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.korea.univ.luias.components.Control_view;
 import com.korea.univ.luias.components.Full_view;
 import com.korea.univ.luias.components.Half_view;
 import com.korea.univ.luias.components.Info_view;
+import com.korea.univ.luias.components.Score_view;
 import com.korea.univ.luias.components.TeamDialog;
+import com.korea.univ.luias.components.system.Computer_strategy;
 import com.korea.univ.luias.components.system.GameController;
 import com.korea.univ.luias.objects.Stone;
 import com.korea.univ.luias.objects.Wall;
@@ -32,7 +32,7 @@ public class Main extends ApplicationAdapter {
 
 	public static ArrayList<Wall> walls = new ArrayList<Wall>();
 	public static ArrayList<Stone> stones = new ArrayList<Stone>();
-	
+	 
 	public static int[][] scoreBoard = new int[2][10];
 
 	public Half_view h_view;
@@ -41,43 +41,47 @@ public class Main extends ApplicationAdapter {
 	public Info_view i_view;
 	public Control_view c_view;
 	
+	public Score_view s_view;
+	public Computer_strategy cs;
+	
 	public GameController controller;
 
 	public TeamDialog t_dialog;
 
 	BitmapFont font_black;
 	BitmapFont font_black_s;
+	
+	
 	BitmapFont font_red;
 	BitmapFont font_yellow;
 
 	private Texture redStone;
 	private Texture yellowStone;
 
-	World world;
+	public World world;
 
 	@Override
 	public void create() {
 		try {
 					
-			FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font1.ttf"));
+			FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font2.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-			parameter.size = 20;
 			parameter.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,/!@#$%^&*()-+=<>;:[]{}`~_";
+			parameter.size = 16;
+			
 			parameter.color = Color.BLACK;
-
 			font_black_s = fontGenerator.generateFont(parameter);
-
-			parameter.size = 26;
-
+			
+			parameter.size = 20;
+			
+			parameter.color = Color.BLACK;
 			font_black = fontGenerator.generateFont(parameter);
-
+			
 			parameter.color = Color.RED;
-
 			font_red = fontGenerator.generateFont(parameter);
-
+			
 			parameter.color = Color.GOLD;
-
 			font_yellow = fontGenerator.generateFont(parameter);
 
 			fontGenerator.dispose();
@@ -93,69 +97,19 @@ public class Main extends ApplicationAdapter {
 		f_view = new Full_view(world);
 		h_view = new Half_view(world, redStone, yellowStone);
 
-		i_view = new Info_view(redStone, yellowStone, font_black, font_red, font_yellow);
-		c_view = new Control_view(h_view, font_black, font_black_s);
+		i_view = new Info_view(font_black, font_red, font_yellow);
+		c_view = new Control_view(h_view);
+		s_view = new Score_view(font_red,font_yellow,font_black);
 
 		h_view.setC_view(c_view);
 		
 		t_dialog = new TeamDialog(this, font_black, font_red, font_yellow);
 		
 		controller = new GameController();
-
+		cs = new Computer_strategy(world,h_view);
+		
 		Gdx.input.setInputProcessor(t_dialog.getStage());
-		
-		world.setContactFilter(new ContactFilter() {
 
-			@Override
-			public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-				// TODO Auto-generated method stub
-
-				for (Wall w : walls) {
-
-					for (Stone s : stones) {
-
-						if (fixtureA == w.getFixture() || fixtureB == w.getFixture()) {
-							Vector2 position;
-							switch (w.getType()) {
-							case TYPE_TOP:
-								position = s.getBody().getPosition();
-								if (position.y > w.getBody().getPosition().y + 0.3f)
-									return true;
-								else
-									return false;
-
-							case TYPE_LEFT:
-								position = s.getBody().getPosition();
-								if (position.x < w.getBody().getPosition().x - 0.3f)
-									return true;
-								else
-									return false;
-
-							case TYPE_RIGHT:
-								position = s.getBody().getPosition();
-								if (position.x > w.getBody().getPosition().x + 0.3f)
-									return true;
-								else
-									return false;
-
-							case TYPE_BOTTOM:
-								position = s.getBody().getPosition();
-								if (position.y < w.getBody().getPosition().y + 0.3f)
-									return true;
-								else
-									return false;
-							}
-
-						}
-
-					}
-
-				}
-
-				return true;
-			}
-		});
-		
 		controller.resetScore();
 	}
 
@@ -164,19 +118,25 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		world.step(1 / 60f, 6, 2);
+        //world.step(1.0f/20.0f, 6, 2);
+		
+		world.step(1/ 30f, 12, 4);
 		
 		f_view.render();
 		h_view.render();
+		s_view.render();
 		i_view.render();
 		c_view.render();
 		t_dialog.render();
-
+		
 		f_view.update();
 		h_view.update();
+		s_view.update();
 		i_view.update();
 		c_view.update();
 		t_dialog.update();
+		cs.update();
+		
 		
 		controller.checkGameStatus(world,i_view.getStones(),h_view.getStones());
 	}
@@ -184,7 +144,13 @@ public class Main extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		font_black.dispose();
+		font_black_s.dispose();
 		font_red.dispose();
 		font_yellow.dispose();
+		
+		redStone.dispose();
+		yellowStone.dispose();
+		
+		i_view.dispose();
 	}
 }

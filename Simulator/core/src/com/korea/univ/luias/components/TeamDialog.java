@@ -43,7 +43,7 @@ public class TeamDialog extends View{
 		viewport = new FitViewport(600, 600, camera);
 		
 		stage = new Stage(viewport);
-		
+
 		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/ninePatches/dialog.pack"));
 		background = new NinePatchDrawable(atlas.createPatch("glossy_rectangle_t"));
 		
@@ -96,6 +96,7 @@ public class TeamDialog extends View{
 				dialog.hide();
 				
 				InputMultiplexer mux = new InputMultiplexer(main.h_view.getStage(),main.c_view.getStage());
+	
 				Gdx.input.setInputProcessor(mux);
 				
 				return true;
@@ -133,6 +134,7 @@ public class TeamDialog extends View{
 	
 	@Override
 	public void render(){
+		Gdx.gl.glViewport(0, 150, 600,600);
 		stage.draw();
 	}
 	

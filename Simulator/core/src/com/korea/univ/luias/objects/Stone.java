@@ -21,11 +21,14 @@ public class Stone extends Phys_Object {
 	private Vector2 curl;
 	private float vx, vy;
 	private boolean isPhys = false;
+	private boolean isTemp = false;
 	private boolean isStop = true;
 	private boolean waitOther = true;
+	private boolean isInfo = false;
 	private float curlV = 0.0f;
 	private Texture texture;
 	private int num = 0;
+	
 	public Stone(Texture texture) {
 		super();
 		this.sprite = new Sprite(texture);
@@ -61,7 +64,7 @@ public class Stone extends Phys_Object {
 		def.restitution = 1.0f;
 
 		CircleShape circle = new CircleShape();
-		circle.setRadius(0.3f);
+		circle.setRadius(0.15f);
 
 		def.shape = circle;
 
@@ -73,8 +76,10 @@ public class Stone extends Phys_Object {
 
 		this.team = team;
 
-		sprite = new Sprite(texture);
-		this.texture = texture;
+		if(texture != null){
+			sprite = new Sprite(texture);
+			this.texture = texture;
+		}
 		this.num = num;
 	}
 
@@ -82,22 +87,22 @@ public class Stone extends Phys_Object {
 
 		this(world, x, y, team, texture,num);
 
-		angle -= 90;
+		//angle -= 90;
 
-		vx = Math.abs(((float) (Math.cos(Math.toRadians(angle))) * power));
-		vy = (float) ((float) (Math.sin(Math.toRadians(angle))) * Math.sqrt(power));
+		vy = Math.abs(((float) (Math.sin(Math.toRadians(angle))) * power));
+		vx = (float) ((float) (Math.cos(Math.toRadians(angle))) * Math.sqrt(power));
 
 		switch (curl) {
 		case 1:
 			body.setAngularVelocity(10f);
-			curlV = 0.15f;
+			curlV = 0.03f;
 			break;
 		case 0:
 			curlV = 0.0f;
 			break;
 		case -1:
 			body.setAngularVelocity(-10f);
-			curlV = -0.15f;
+			curlV = -0.03f;
 			break;
 		}
 
@@ -119,7 +124,91 @@ public class Stone extends Phys_Object {
 		if(curl != 0)
 			isStop = false;
 	}
+	
+	public Stone(World world, float x, float y, int team, int num){
+		super();
 
+		b_def = new BodyDef();
+		b_def.type = BodyType.DynamicBody;
+		b_def.position.set(x, y);
+
+		body = world.createBody(b_def);
+
+		def = new FixtureDef();
+		def.density = 1.0f;
+		def.friction = 0.5f;
+		def.restitution = 1.0f;
+
+		CircleShape circle = new CircleShape();
+		circle.setRadius(0.15f);
+
+		def.shape = circle;
+
+		fixture = body.createFixture(def);
+
+		circle.dispose();
+
+		body.setLinearDamping(1f);
+
+		this.team = team;
+		this.num = num;
+	}
+	
+	public Stone(World world, float x, float y, int team, int num, float power, float angle, int curl){
+		//super();
+
+		b_def = new BodyDef();
+		b_def.type = BodyType.DynamicBody;
+		b_def.position.set(x, y);
+
+		body = world.createBody(b_def);
+
+		def = new FixtureDef();
+		def.density = 1.0f;
+		def.friction = 0.5f;
+		def.restitution = 1.0f;
+
+		CircleShape circle = new CircleShape();
+		circle.setRadius(0.15f);
+
+		def.shape = circle;
+
+		fixture = body.createFixture(def);
+
+		circle.dispose();
+
+		body.setLinearDamping(1f);
+
+		this.team = team;
+		this.num = num;
+		
+		vy = Math.abs(((float) (Math.sin(Math.toRadians(angle))) * power));
+		vx = (float) ((float) (Math.cos(Math.toRadians(angle))) * Math.sqrt(power));
+
+		switch (curl) {
+		case 1:
+			body.setAngularVelocity(10f);
+			curlV = 0.03f;
+			break;
+		case 0:
+			curlV = 0.0f;
+			break;
+		case -1:
+			body.setAngularVelocity(-10f);
+			curlV = -0.03f;
+			break;
+		}
+
+		if(curl != 0)
+			isStop = false;
+		
+		body.setAngularDamping(0.2f);
+		body.setLinearVelocity(vx, vy);
+		isPhys = true;
+		isTemp = true;
+	}
+
+	
 	@Override
 	public void update(float delta) {
 
@@ -129,40 +218,49 @@ public class Stone extends Phys_Object {
 			sprite.setPosition(this.getX(), this.getY());
 			sprite.setSize(this.getWidth(), this.getHeight());
 			sprite.setOriginCenter();
-			sprite.setRotation(this.getRotation());
-			this.setRotation(this.getRotation() + 5f);
+			
+			if(!isInfo){
+				//sprite.setRotation(this.getRotation());
+				//this.setRotation(this.getRotation() + 5f);
+			}
 		}
 
 		if (isPhys) {
 			this.setPosition(body.getPosition().x, body.getPosition().y);
-			sprite.setPosition(this.getX() - (this.getWidth() / 2), this.getY() - (this.getHeight() / 2));
 			this.setRotation(this.getRotation()+body.getAngularVelocity());
-			sprite.setRotation(this.getRotation());
+			
+			if(!isTemp){
+				sprite.setPosition(this.getX() - (this.getWidth() / 2), this.getY() - (this.getHeight() / 2));
+				sprite.setRotation(this.getRotation());
+			}
 			
 			if(!isStop){
 				curl = body.getLinearVelocity().nor();
 				curl = curl.rotate(90);
-				curl = new Vector2(0, curl.y * curlV);
+				curl = new Vector2(curl.x * curlV, 0);
 				body.applyForceToCenter(curl, false);
 			}
 			
-			if(body.getLinearVelocity().len() < 1f){
+			if(body.getLinearVelocity().len() < 0.7f){
 				isStop = true;
 			}
 			
-			if(body.getLinearVelocity().len() <= 0.1f)
+			if(body.getLinearVelocity().len() <= 0.05f)
 				waitOther = false;
-
+			
 		}
 		
 		
 
 	}
 
+	
 	@Override
 	public void draw(Batch batch, float delta) {
-
-		sprite.draw(batch);
+		
+		if(!isTemp)
+			sprite.draw(batch);
+		
 		update(delta);
 	}
 
@@ -192,5 +290,14 @@ public class Stone extends Phys_Object {
 	
 	public boolean waitThis(){
 		return waitOther;
+	}
+	
+	public void isInfo(){
+		isInfo = true;
+	}
+	
+	public void setAngle(float angle){
+		sprite.setRotation(angle);
+		this.setRotation(angle);
 	}
 }

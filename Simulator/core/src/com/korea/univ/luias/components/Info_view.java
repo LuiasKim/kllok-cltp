@@ -2,13 +2,12 @@ package com.korea.univ.luias.components;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.korea.univ.luias.Main;
@@ -19,6 +18,7 @@ public class Info_view extends View {
 	
 	
 	BitmapFont black, red, yellow;
+	Texture redStone, yellowStone;
 	SpriteBatch batch;
 
 	float width = 600, height = 600;
@@ -27,7 +27,7 @@ public class Info_view extends View {
 
 	Stage stage;
 
-	public Info_view(Texture redStone, Texture yellowStone, BitmapFont... font) {
+	public Info_view(BitmapFont... font) {
 		super();
 		this.black = font[0];
 		this.red = font[1];
@@ -38,27 +38,33 @@ public class Info_view extends View {
 		camera = new OrthographicCamera();
 		viewport = new FitViewport(width, height, camera);
 		viewport.apply();
-
+		
 		shaperenderer = new ShapeRenderer();
 		stage = new Stage(viewport);
 
-		float x = 8 + 10;
-		for (int i = 0; i < 8; i++, x += 26) {
+		redStone = new Texture(Gdx.files.internal("images/Stones/RedStone.png"));
+		yellowStone = new Texture(Gdx.files.internal("images/Stones/YellowStone.png"));
+		//float x = 8 + 10;
+		float y = 150;
+		for (int i = 0; i < 8; i++, y+= 30) {
 			Stone r = new Stone(redStone);
-			r.setPosition(x, height - 135);
-			r.setSize(24, 24);
+			r.isInfo();
+			r.setPosition(80, y);
+			r.setSize(28, 28);
 			stage.addActor(r);
 			stones.add(r);
 		}
 		
-		x = 8 + 10;
+		y = 150;
+		//x = 8 + 10;
 		
-		for(int i = 0; i < 8; i++, x+= 26){
-			Stone y = new Stone(yellowStone);
-			y.setPosition(x, height - 215);
-			y.setSize(24, 24);
-			stage.addActor(y);
-			stones.add(y);
+		for(int i = 0; i < 8; i++, y+= 30){
+			Stone ye = new Stone(yellowStone);
+			ye.isInfo();
+			ye.setPosition(363, y);
+			ye.setSize(28, 28);
+			stage.addActor(ye);
+			stones.add(ye);
 		}
 
 	}
@@ -78,12 +84,27 @@ public class Info_view extends View {
 
 	@Override
 	public void render() {
+		Gdx.gl.glViewport(15, 55, 850, 850);
 		camera.update();
 
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
 
+		//black.draw(batch,version, width/2, height-10);
+		//black.draw(batch, "Team - ", width/2, height - 50);
+		//red.draw(batch, "RED", 7 + (width/2)+80, height - 50);
+
+		//black.draw(batch, "Team - ", width/2, height - 110);
+		//yellow.draw(batch, "YELLOW", (width/2)+80, height - 110);
+
+		//black.draw(batch, "- Current Thrower -", (width/2)+50, height - 165);
+		//if (Main.current == 0)
+		//	red.draw(batch, "RED", (width/2)+135, height - 195);
+		//else
+		//	yellow.draw(batch, "YELLOW", (width/2)+110, height - 195);
+
+		/*
 		black.draw(batch, version, 7, height - 10);
 		black.draw(batch, "Team - ", 7, height - 90);
 		red.draw(batch, "RED", 7 + 80, height - 90);
@@ -98,9 +119,10 @@ public class Info_view extends View {
 			yellow.draw(batch, "YELLOW", 7 + 78, height - 275);
 
 		black.draw(batch, "Score", 7, height - 315);
-
+		*/
 		batch.end();
-
+		
+		/* version1 score board
 		shaperenderer.setProjectionMatrix(camera.combined);
 
 		shaperenderer.begin(ShapeType.Filled);
@@ -166,8 +188,9 @@ public class Info_view extends View {
 		}
 
 		batch.end();
-
+		*/
 		stage.draw();
+		
 
 	}
 
@@ -179,4 +202,8 @@ public class Info_view extends View {
 		return stones;
 	}
 
+	public void dispose(){
+		redStone.dispose();
+		yellowStone.dispose();
+	}
 }

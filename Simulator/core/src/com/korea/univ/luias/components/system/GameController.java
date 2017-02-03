@@ -8,14 +8,14 @@ import com.korea.univ.luias.Main;
 import com.korea.univ.luias.objects.Stone;
 
 public class GameController {
-
+	
 	public void checkGameStatus(World world, ArrayList <Stone> array, Array <Stone> stones) {
 		/**
 		 * check every time. 1. check throw count 2. if end of throwing,
 		 * calculate score ( Calc_score ) 3. set the waiting throw for other's
 		 * stone stop
-		 */
-
+		 */	
+		
 		if (Main.total >= 16) {
 			if (Main.stones.get(Main.total - 1).waitThis())
 				return;
@@ -89,5 +89,6 @@ public class GameController {
 				Main.scoreBoard[i][j] = -1;
 
 	}
+	
 
 }

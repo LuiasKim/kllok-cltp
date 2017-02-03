@@ -22,8 +22,8 @@ public class Calc_score {
 	 * y = 2.135
 	*/
 	
-	private float x = 39.63f+2.745f;
-	private float y = 2.135f+22.865f;
+	private float x = 2.140f;
+	private float y = 38.53f;
 	
 	@SuppressWarnings("unused")
 	public int[] calc(){
