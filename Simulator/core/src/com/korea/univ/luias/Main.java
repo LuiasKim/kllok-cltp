@@ -18,8 +18,8 @@ import com.korea.univ.luias.components.Half_view;
 import com.korea.univ.luias.components.Info_view;
 import com.korea.univ.luias.components.Score_view;
 import com.korea.univ.luias.components.TeamDialog;
-import com.korea.univ.luias.components.system.Computer_strategy;
 import com.korea.univ.luias.components.system.GameController;
+import com.korea.univ.luias.components.system.strategy.Computer_strategy;
 import com.korea.univ.luias.objects.Stone;
 import com.korea.univ.luias.objects.Wall;
 
@@ -135,7 +135,7 @@ public class Main extends ApplicationAdapter {
 		i_view.update();
 		c_view.update();
 		t_dialog.update();
-		cs.update();
+		//cs.update();
 		
 		
 		controller.checkGameStatus(world,i_view.getStones(),h_view.getStones());
