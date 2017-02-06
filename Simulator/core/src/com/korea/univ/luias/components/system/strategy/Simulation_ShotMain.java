@@ -1,126 +1,106 @@
 package com.korea.univ.luias.components.system.strategy;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.korea.univ.luias.Main;
+import com.korea.univ.luias.components.Half_view;
 import com.korea.univ.luias.components.system.strategy.variables.Strategy_parameter;
-import com.korea.univ.luias.components.system.strategy.variables.Strategy_support;
 import com.korea.univ.luias.objects.Stone;
 
-public class Simulation_ShotMain {
+public class Simulation_ShotMain extends Thread {
 
-	private ArrayList <Stone> stones;
-	private ArrayList <Stone> stones_shoted;
-	private ArrayList <Strategy_parameter> shots;
-	private ArrayList <World> worlds;
-	
-	private Random random;
+	private ArrayList<Simulation_ShotSub> subs;
+	private ArrayList<Strategy_parameter> params;
 	private Stage stage;
-	
-	public Simulation_ShotMain(Stage stage){
-		
+	private Simulation_functions funcs;
+	private boolean end = false;
+
+	private World mWorld;
+	private Half_view h_view;
+
+	public Simulation_ShotMain(World world, Half_view h_view , Stage stage, ArrayList<Strategy_parameter> params) {
+
+		this.setName("Simul_Main");
+		this.params = params;
 		this.stage = stage;
-		stones = new ArrayList<Stone>();
-		stones_shoted = new ArrayList<Stone>();
-		shots = new ArrayList<Strategy_parameter>();
-		worlds = new ArrayList<World>();
-		
+		this.mWorld = world;
+		this.h_view = h_view;
+
+		subs = new ArrayList<Simulation_ShotSub>();
+		funcs = new Simulation_functions();
 	}
-	
-	public void shotStone(World world,int team, int try_count, Strategy_parameter parameter){
-		
-		Stone stone = new Stone(world, 2.140f, 3.78f, team, try_count, parameter.getPower(),(int)parameter.getAngle(),(int)parameter.getCurl());
-		/*Stone stone = new Stone(world, 2.140f, 3.78f, team,(Main.current == 0) ? h_view.redStone : h_view.yellowStone,
-				parameter.getPower(),(int) parameter.getAngle(), parameter.getCurl(),0.3f,0.3f,try_count);
-				*/
-		stones.add(stone);
-		stones_shoted.add(stone);
-		stage.addActor(stone);
-		
-	}
-	
-	public Strategy_parameter generateParameter(int situation,Strategy_parameter previous){
-		
-		float angle = 0f;
-		int curl = 0;
-		float power = 0f;
-		
-		if(previous == null){
-			return shotRandom(situation);
-		}else{
-			if(previous.getSupport() == null)
-				return shotRandom(situation);
-			
-			Strategy_support support = previous.getSupport();
-			curl = previous.getCurl();
-			
-			if(support.angle < 0){
-				angle = previous.getAngle() - (random.nextInt(5)+1);
-			}else{
-				angle = previous.getAngle() + (random.nextInt(5)+1);
-			}
-			if(support.power < 0){
-				power = previous.getPower() - (random.nextInt(2)+1);
-			}else{
-				power = previous.getPower() + (random.nextInt(2)+1);
+
+	@Override
+	public void run() {
+		end = false;
+		System.out.println("simulate Main started");
+		int situation = Strategy_util.analyze(Main.current, Main.stones);
+		Strategy_parameter parameter = funcs.shotRandom(situation);
+		params.add(parameter);
+
+		Simulation_ShotSub sub1 = new Simulation_ShotSub(subs,stage, params, parameter, 0, 1);
+		subs.add(sub1);
+
+		sub1.start();
+
+		while (!sub1.isEnd()) {
+			try {
+				Thread.sleep(300);
+			} catch (Exception e) {
 			}
 		}
+
+		int best = selectShot(params);
+		parameter = params.get(best);
+
+		Main.stones.add(new Stone(mWorld, 2.140f, 3.78f, Main.current,
+				(Main.current == 0) ? h_view.redStone : h_view.yellowStone, parameter.getPower(),
+				(int) parameter.getAngle(), parameter.getCurl(), 0.3f, 0.3f, Main.total));
+
+		if (Main.current == 0)
+			Main.rthrowCount++;
+		else
+			Main.ythrowCount++;
+
+		Main.total++;
+
+		Main.current = Main.current == 0 ? 1 : 0;
+		System.out.println("simulate Main ended");
+
+		subs.clear();
+		params.clear();
+		stage.clear();
 		
-		return new Strategy_parameter(angle,power,curl,situation);
+		end = true;
 	}
-	
-	public Strategy_parameter shotRandom(int situation){
-		float angle = 0f;
-		int curl = 0;
-		float power = 0f;
-		
-		int rand = random.nextInt(2);
-		curl = rand == 0 ? -1 : rand;
-			
-		if(curl == -1)//right
-			angle = random.nextInt(21)+90f;
-		
-		if(curl == 1)//left
-			angle = (random.nextInt(21)*-1)+90f;
-			
-		power = random.nextInt(21)+25f;
-		
-		return new Strategy_parameter(angle,power,curl,situation);
-	}
-	
-	public void setWorld(World world){
-		for(int i = 0; i < Main.stones.size(); i++){
-			Stone t = Main.stones.get(i);
-			Vector2 position = t.getBody().getPosition();
-			stones.add(new Stone(world,position.x,position.y,t.getTeam(),t.getNum()));
+
+	public int selectShot(ArrayList<Strategy_parameter> parameters) {
+
+		int temp = 0;
+		System.out.println("parameter sizes : " + parameters.size());
+		for (int i = 1; i < parameters.size(); i++) {
+			System.out.println(temp + "st score : " + parameters.get(temp).getScore() + "  " + i + "st score : "
+					+ parameters.get(i).getScore());
+			if (parameters.get(temp).getScore() > parameters.get(i).getScore()) {
+				temp = i;
+			}
 		}
-		
+
+		return temp;
 	}
-	
-	public void resetWorld(World world){
-		destroyWorld(world);
-		setWorld(world);
+
+	public void update() {
+
+		for (int i = 0; i < subs.size(); i++) {
+			subs.get(i).update();
+		}
+
 	}
-	
-	public void destroyWorld(World world){
-		
-		for(Stone stone : stones)
-			world.destroyBody(stone.getBody());
-		
-		for(Stone stone : stones_shoted)
-			stone.remove();
-			
-		stones.clear();
+
+	public boolean isEnd() {
+		return end;
 	}
-	
-	
-	public void update(){
-		for(int i = 0; i < worlds.size(); i++)
-			worlds.get(i).step(1.0f/20.0f, 12, 4);
-	}
-	
+
 }

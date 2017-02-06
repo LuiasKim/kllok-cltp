@@ -135,7 +135,7 @@ public class Main extends ApplicationAdapter {
 		i_view.update();
 		c_view.update();
 		t_dialog.update();
-		//cs.update();
+		cs.update();
 		
 		
 		controller.checkGameStatus(world,i_view.getStones(),h_view.getStones());

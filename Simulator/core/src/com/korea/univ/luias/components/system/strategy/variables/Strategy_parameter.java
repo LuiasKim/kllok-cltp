@@ -1,13 +1,17 @@
 package com.korea.univ.luias.components.system.strategy.variables;
 
 public class Strategy_parameter {
-	private float score = 0;
+	private float score = 9999;
 	
 	float angle;
 	float power;
 	int curl;
 	int situation;
 	Strategy_support support;
+	
+	public Strategy_parameter(){
+		
+	}
 	
 	public Strategy_parameter(float angle, float power, int curl, int situation){
 		
