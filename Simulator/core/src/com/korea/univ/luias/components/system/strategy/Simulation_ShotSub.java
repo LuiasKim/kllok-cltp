@@ -85,6 +85,9 @@ public class Simulation_ShotSub extends Thread {
 				for (int i = 0; i < subs.size(); i++) {
 					Simulation_ShotSub sub = subs.get(i);
 
+					if(sub == null)
+						continue;
+					
 					if (sub.getThisLayer() != Layer)
 						continue;
 
@@ -110,7 +113,7 @@ public class Simulation_ShotSub extends Thread {
 			best = parameter;
 		}
 
-		if (Layer == 3) {
+		if (Layer == 4) {
 			System.out.println("simulate" + toString() + "ended");
 			end = true;
 			return;
@@ -118,14 +121,19 @@ public class Simulation_ShotSub extends Thread {
 
 		// 6. generate new Parameters
 		parameter = funcs.generateParameter(parameter.getSituation(), parameter);
-		params.add(parameter);
+		synchronized (params) {
+			params.add(parameter);
+		}
+		
 
 		// 7. Start two new thread
 		Simulation_ShotSub sub1 = new Simulation_ShotSub(subs, stage, params, parameter, Layer + 1, num+1);
 		Simulation_ShotSub sub2 = new Simulation_ShotSub(subs, stage, params, best, Layer + 1, num+2);	
 		
-		subs.add(sub1);
-		subs.add(sub2);
+		synchronized (subs) {
+			subs.add(sub1);
+			subs.add(sub2);
+		}
 
 		sub1.start();
 		sub2.start();
@@ -133,7 +141,7 @@ public class Simulation_ShotSub extends Thread {
 
 		while (!sub1.isEnd() || !sub2.isEnd()) {
 			try {
-				Thread.sleep(500);
+				Thread.sleep(1000);
 			} catch (Exception e) {
 			}
 		}

@@ -35,7 +35,10 @@ public class Simulation_functions {
 				parameter.getPower(),(int) parameter.getAngle(), parameter.getCurl(),0.3f,0.3f,try_count);
 				*/
 		stones.add(shoted);
-		stage.addActor(shoted);
+		
+		synchronized (stage) {
+			stage.addActor(shoted);
+		}
 		
 	}
 	
@@ -110,8 +113,10 @@ public class Simulation_functions {
 		for(Stone stone : stones)
 			world.destroyBody(stone.getBody());
 		
-		shoted.remove();
-			
+		synchronized (stage) {
+			shoted.remove();
+		}
+		
 		stones.clear();
 	}
 	

@@ -93,10 +93,12 @@ public class Simulation_ShotMain extends Thread {
 
 	public void update() {
 
-		for (int i = 0; i < subs.size(); i++) {
-			subs.get(i).update();
+		synchronized (subs) {
+			for (int i = 0; i < subs.size(); i++) {
+				subs.get(i).update();
+			}
 		}
-
+		
 	}
 
 	public boolean isEnd() {

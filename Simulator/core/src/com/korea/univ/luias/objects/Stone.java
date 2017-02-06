@@ -263,6 +263,20 @@ public class Stone extends Phys_Object {
 		
 		update(delta);
 	}
+	
+	public boolean outOfRule(){
+		
+		// Shoot and HogLine
+		if(isStop){ //it is stop?
+			if(body.getPosition().y < 33.33f) //it's under than Hog line?
+				return true; //Out of Rules
+		}
+		
+		if(body.getPosition().x < 0.25f || body.getPosition().x > 4.22f) //it's near from Side bumper?
+			return true;
+		
+		return false;
+	}
 
 	public int getTeam() {
 		return team;
