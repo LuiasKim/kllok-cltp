@@ -21,7 +21,7 @@ import com.korea.univ.luias.components.TeamDialog;
 import com.korea.univ.luias.components.system.GameController;
 import com.korea.univ.luias.components.system.strategy.Computer_strategy;
 import com.korea.univ.luias.objects.Stone;
-import com.korea.univ.luias.objects.Wall;
+import com.korea.univ.luias.objects.Stone.Stone_Type;
 
 public class Main extends ApplicationAdapter {
 
@@ -30,8 +30,8 @@ public class Main extends ApplicationAdapter {
 	public static int current = 1;
 	public static boolean isStarted = false;
 
-	public static ArrayList<Wall> walls = new ArrayList<Wall>();
-	public static ArrayList<Stone> stones = new ArrayList<Stone>();
+	public volatile static ArrayList<Stone> stones = new ArrayList<Stone>();
+	public static Stone_Type types[] = {Stone_Type.Type_Lead, Stone_Type.Type_Second, Stone_Type.Type_Third, Stone_Type.Type_Fourth};
 	 
 	public static int[][] scoreBoard = new int[2][10];
 
@@ -111,16 +111,23 @@ public class Main extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(t_dialog.getStage());
 
 		controller.resetScore();
+		
 	}
 
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        //world.step(1.0f/20.0f, 6, 2);
 		
-		world.step(1/ 30f, 12, 4);
+		for(int i = 0; i < stones.size() ;i++){
+			if(stones.get(i).isRemoved()){
+				stones.remove(i);
+				i = 0;
+			}
+		}
+		
+		if(isStarted)
+			world.step(1/ 30f, 12, 4);
 		
 		f_view.render();
 		h_view.render();
@@ -135,7 +142,7 @@ public class Main extends ApplicationAdapter {
 		i_view.update();
 		c_view.update();
 		t_dialog.update();
-		cs.update();
+		//cs.update();
 		
 		
 		controller.checkGameStatus(world,i_view.getStones(),h_view.getStones());

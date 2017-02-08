@@ -44,7 +44,6 @@ public class Half_view extends View {
 
 	private float power = 0.0f;
 	private Control_view c_view;
-	
 
 	public Half_view(final World world, Texture redStone, Texture yellowStone) {
 		camera = new OrthographicCamera();
@@ -52,10 +51,10 @@ public class Half_view extends View {
 		viewport = new FitViewport(width, height, camera);
 
 		stage = new Stage(viewport);
-		
-		camera.position.set(3.2f,3.01f,0);
+
+		camera.position.set(3.2f, 3.01f, 0);
 		camera.zoom = 0.3f;
-		
+
 		shaperenderer = new ShapeRenderer();
 		this.redStone = redStone;
 		this.yellowStone = yellowStone;
@@ -77,27 +76,27 @@ public class Half_view extends View {
 			@Override
 			public boolean mouseMoved(InputEvent event, float x, float y) {
 				if (x >= 1.3f && x <= 7.5f) {
-					mouseX = x-2f;
-					mouseY = y+0.65f;
+					mouseX = x - 2f;
+					mouseY = y + 0.65f;
 				}
-				
-				if(mouseY < 2f)
+
+				if (mouseY < 2f)
 					return false;
-				
+
 				return true;
 			}
 
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				
-				if(!Main.isStarted)
+
+				if (!Main.isStarted)
 					return false;
-				
-				if(mouseY < 2f)
+
+				if (mouseY < 2f)
 					return false;
-				
+
 				if (Main.stones.size() > 0) {
-					if (Main.stones.get(Main.total - 1).waitThis())
+					if (Main.stones.get(Main.stones.size() - 1).waitThis())
 						return false;
 				}
 				if (x >= 1.3f && x <= 7.5f) {
@@ -115,9 +114,9 @@ public class Half_view extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 
-				if(mouseY < 2f)
+				if (mouseY < 2f)
 					return;
-				
+
 				if (isPressed) {
 					isPressed = false;
 
@@ -126,18 +125,18 @@ public class Half_view extends View {
 
 					Main.stones.add(new Stone(world, 2.140f, 3.78f, Main.current,
 							(Main.current == 0) ? Half_view.this.redStone : Half_view.this.yellowStone, power,
-						(int) angle, c_view.getCurl(), 0.3f, 0.3f, Main.total + 1));
-					
+							(int) angle, c_view.getCurl(), 0.3f, 0.3f, Main.total + 1,
+							Main.types[(Main.total + 1) / 5]));
 
 					if (Main.current == 0)
 						Main.rthrowCount++;
 					else
 						Main.ythrowCount++;
-					
-					Main.total ++;
+
+					Main.total++;
 
 					Main.current = Main.current == 0 ? 1 : 0;
-					
+
 				}
 
 			}
@@ -154,7 +153,7 @@ public class Half_view extends View {
 
 		if (Main.isStarted) {
 			if (Main.stones.size() > 0) {
-				if (Main.stones.get(Main.total - 1).waitThis()) {
+				if (Main.stones.get(Main.stones.size() - 1).waitThis()) {
 					y_temp.setVisible(false);
 					r_temp.setVisible(false);
 				} else {
@@ -190,13 +189,13 @@ public class Half_view extends View {
 
 		// angle value to Absolute value
 		angle = Math.abs(angle);
-		
-		r_temp.setAngle(angle-90);
-		y_temp.setAngle(angle-90);
-		
-		if(angle >= 130)
+
+		r_temp.setAngle(angle - 90);
+		y_temp.setAngle(angle - 90);
+
+		if (angle >= 130)
 			angle = 130;
-		else if(angle <= 60)
+		else if (angle <= 60)
 			angle = 50;
 
 		dX[0] = (float) (2.135f + Math.cos(Math.toRadians(angle)) * 2f);
@@ -222,38 +221,46 @@ public class Half_view extends View {
 			if (s.getY() < 42.34f - ground_height)
 				continue;
 
+			if (s.isRemoved())
+				continue;
+
 			if (stones.size < 1)
-				stones.add(new Stone(s.getTexture(), s.getX()-0.15f, ground_height - (42.34f - s.getY()),
-						0.3f, 0.3f, s.getNum()));
+				stones.add(new Stone(s.getTexture(), s.getX() - 0.15f, ground_height - (42.34f - s.getY()), 0.3f, 0.3f,
+						s.getNum()));
 
 			for (int j = 0; j < this.stones.size; j++) {
 				Stone s2 = this.stones.get(j);
-
 				if (s2.getNum() == s.getNum()) {
-					s2.setPosition(s.getX()-0.15f, ground_height - (42.34f - s.getY()));
+					s2.setFreeGuard(s.getFreeGuard());
+					s2.setPosition(s.getX() - 0.15f, ground_height - (42.34f - s.getY()));
 					s2.getSprite().setRotation(s.getSprite().getRotation());
 				} else if (s.getNum() > stones.size) {
-					stones.add(new Stone(s.getTexture(), s.getX()-0.15f,
-							ground_height - (42.34f - s.getY()), 0.3f, 0.3f, s.getNum()));
+					stones.add(new Stone(s.getTexture(), s.getX() - 0.15f, ground_height - (42.34f - s.getY()), 0.3f,
+							0.3f, s.getNum()));
 				}
 
-				if (s2.getX() <= 0.1f || s2.getX() >= 4.28f || s2.getY() >= ground_height - 0.1f) {
-					s2.remove();
-					stones.removeIndex(j);
-					j--;
+				if (s2.getX() <= 0.05f || s2.getX() >= 4.05f || s2.getY() >= ground_height - (42.34f - 40.5f)) {
+					if (!s2.getFreeGuard()) {
+						s2.setIsRemoved(true);
+						s2.remove();
+						stones.removeIndex(j);
+						j--;
+					}
 				}
 
 			}
 
 		}
-		for (Stone s : stones)
+
+		for (Stone s : stones) {
 			stage.addActor(s);
-		
-		if(!Main.isStarted){
-			if(Main.stones.size() < 1){
-				for(int i = 0; i < stones.size; i++)
+		}
+
+		if (!Main.isStarted) {
+			if (Main.stones.size() < 1) {
+				for (int i = 0; i < stones.size; i++)
 					stones.get(i).remove();
-				
+
 				stones.clear();
 			}
 		}
@@ -269,48 +276,46 @@ public class Half_view extends View {
 		Gdx.gl.glViewport(0, 55, 850, 850);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
+		// =================================== Version 2
 
-		//=================================== Version 2
-		
 		shaperenderer.begin(ShapeType.Filled);
 		shaperenderer.setColor(Color.BLACK);
 		shaperenderer.rectLine(0.01f, 0.01f, 4.28f, 0.01f, 0.02f);
 		shaperenderer.rectLine(0.01f, 8.88f, 4.3f, 8.88f, 0.02f);
 		shaperenderer.rectLine(0.01f, 0.01f, 0.01f, 8.87f, 0.02f);
 		shaperenderer.rectLine(4.3f, 0.01f, 4.3f, 8.87f, 0.02f);
-		
-		shaperenderer.setColor(new Color(0,0,0,0.3f));
+
+		shaperenderer.setColor(new Color(0, 0, 0, 0.3f));
 		shaperenderer.rect(0.03f, 0.05f, 4.23f, 8.80f);
-		
-		shaperenderer.setColor(new Color(1,1,1,0.9f));
+
+		shaperenderer.setColor(new Color(1, 1, 1, 0.9f));
 		shaperenderer.rect(0.03f, 0.05f, 4.23f, 8.80f);
-		
-		shaperenderer.setColor(new Color(0,0,1,0.7f));
-		shaperenderer.circle(0.01f+2.135f,0.01f+6.40f,1.83f,50);
-		
-		shaperenderer.setColor(new Color(1,1,1,1f));
-		shaperenderer.circle(0.01f+2.135f,0.01f+6.40f,1.22f,50);
-		shaperenderer.setColor(new Color(1,0,0,0.6f));
-		shaperenderer.circle(0.01f+2.135f,0.01f+6.40f,0.61f,50);
-		shaperenderer.setColor(new Color(1,1,1,1f));
-		shaperenderer.circle(0.01f+2.135f,0.01f+6.40f,0.15f,50);
+
+		shaperenderer.setColor(new Color(0, 0, 1, 0.7f));
+		shaperenderer.circle(0.01f + 2.135f, 0.01f + 6.40f, 1.83f, 50);
+
+		shaperenderer.setColor(new Color(1, 1, 1, 1f));
+		shaperenderer.circle(0.01f + 2.135f, 0.01f + 6.40f, 1.22f, 50);
+		shaperenderer.setColor(new Color(1, 0, 0, 0.6f));
+		shaperenderer.circle(0.01f + 2.135f, 0.01f + 6.40f, 0.61f, 50);
+		shaperenderer.setColor(new Color(1, 1, 1, 1f));
+		shaperenderer.circle(0.01f + 2.135f, 0.01f + 6.40f, 0.15f, 50);
 		shaperenderer.end();
-		
+
 		shaperenderer.begin(ShapeType.Line);
 		shaperenderer.setColor(Color.BLACK);
-		shaperenderer.line(0.01f, 6.41f,4.28f,6.41f);
-		shaperenderer.line(0.01f, 8.24f,4.28f,8.24f);
-		shaperenderer.line(2.145f, 8.87f,2.145f,0.01f);
+		shaperenderer.line(0.01f, 6.41f, 4.28f, 6.41f);
+		shaperenderer.line(0.01f, 8.24f, 4.28f, 8.24f);
+		shaperenderer.line(2.145f, 8.87f, 2.145f, 0.01f);
 		shaperenderer.end();
-		
+
 		stage.draw();
-		
+
 		shaperenderer.begin(ShapeType.Filled);
 
-		
 		if (Main.isStarted) {
 			if (Main.stones.size() > 0) {
-				if (!Main.stones.get(Main.total - 1).waitThis()) {
+				if (!Main.stones.get(Main.stones.size() - 1).waitThis()) {
 					shaperenderer.setColor(Color.CORAL);
 					shaperenderer.rectLine(2.135f, 0.52f, dX[0], dY[0], 0.05f);
 					shaperenderer.rectLine(dX[0], dY[0], dX[1], dY[1], 0.05f);
@@ -338,8 +343,8 @@ public class Half_view extends View {
 	public float getPower() {
 		return power;
 	}
-	
-	public Array <Stone> getStones(){
+
+	public Array<Stone> getStones() {
 		return stones;
 	}
 }

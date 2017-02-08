@@ -35,8 +35,10 @@ public class Full_view extends View{
 	@Override
 	public void update(){
 		
-		if(Main.stones.size() > 0)
-			stage.addActor(Main.stones.get(Main.total-1));
+		if(Main.stones.size() > 0){
+			if(!Main.stones.get(Main.stones.size()-1).isRemoved())
+				stage.addActor(Main.stones.get(Main.stones.size()-1));
+		}
 		
 	}
 	

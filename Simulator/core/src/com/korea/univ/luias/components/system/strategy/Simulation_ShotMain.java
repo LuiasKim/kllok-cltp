@@ -57,7 +57,7 @@ public class Simulation_ShotMain extends Thread {
 
 		Main.stones.add(new Stone(mWorld, 2.140f, 3.78f, Main.current,
 				(Main.current == 0) ? h_view.redStone : h_view.yellowStone, parameter.getPower(),
-				(int) parameter.getAngle(), parameter.getCurl(), 0.3f, 0.3f, Main.total));
+				(int) parameter.getAngle(), parameter.getCurl(), 0.3f, 0.3f, Main.total+1, Main.types[(Main.total+1)/5]));
 
 		if (Main.current == 0)
 			Main.rthrowCount++;

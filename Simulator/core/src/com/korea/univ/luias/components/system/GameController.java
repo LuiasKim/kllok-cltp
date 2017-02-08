@@ -17,7 +17,7 @@ public class GameController {
 		 */	
 		
 		if (Main.total >= 16) {
-			if (Main.stones.get(Main.total - 1).waitThis())
+			if (Main.stones.get(Main.stones.size()-1).waitThis())
 				return;
 
 			Main.isStarted = false;
