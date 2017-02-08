@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.korea.univ.luias.Main;
 import com.korea.univ.luias.components.Half_view;
+import com.korea.univ.luias.components.system.strategy.variables.Coordinate;
 import com.korea.univ.luias.components.system.strategy.variables.Strategy_parameter;
 
 /* ||*********************************************************************||
@@ -60,8 +61,10 @@ public class Computer_strategy {
 	private boolean nowSimulating = false;
 	private Stage stage;
 	private Half_view h_view;
+	private Coordinate coord;
 
 	private ArrayList<Strategy_parameter> params;
+	private TempThread tThread;
 
 	private Simulation_ShotMain sMain;
 
@@ -71,18 +74,31 @@ public class Computer_strategy {
 		this.mWorld = world;
 		this.h_view = h_view;
 		params = new ArrayList<Strategy_parameter>();
+		coord = new Coordinate();
+		
+		
 
 	}
 
 	public void startSimulation() {
+		if(nowSimulating)
+			return;
+		
+		nowSimulating = true;
+		
+		tThread = new TempThread(stage,coord,h_view);
+		tThread.start();
+		
+		/*
 		nowSimulating = true;
 
 		sMain = new Simulation_ShotMain(mWorld, h_view, stage, params);
 		sMain.start();
-
+		*/
 	}
 
 	public void update() {
+		/*
 		if (nowSimulating)
 			sMain.update();
 
@@ -107,7 +123,11 @@ public class Computer_strategy {
 				}
 			}
 		}
-
+		*/
+		
+		if(nowSimulating)
+			tThread.update();
+		
 		stage.draw();
 
 	}

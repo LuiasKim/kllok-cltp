@@ -18,7 +18,7 @@ public class Full_view extends View{
 	private float height = 50f;
 	
 	
-	private Stage stage;
+	private static Stage stage;
 	
 	public Full_view(World world){
 		camera = new OrthographicCamera();

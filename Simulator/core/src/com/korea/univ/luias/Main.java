@@ -29,6 +29,7 @@ public class Main extends ApplicationAdapter {
 	public static int userTeam = -1, end = 1;
 	public static int current = 1;
 	public static boolean isStarted = false;
+	public static boolean WaitWorld = false;
 
 	public volatile static ArrayList<Stone> stones = new ArrayList<Stone>();
 	public static Stone_Type types[] = {Stone_Type.Type_Lead, Stone_Type.Type_Second, Stone_Type.Type_Third, Stone_Type.Type_Fourth};
@@ -58,7 +59,7 @@ public class Main extends ApplicationAdapter {
 	private Texture redStone;
 	private Texture yellowStone;
 
-	public World world;
+	public static World world;
 
 	@Override
 	public void create() {
@@ -119,6 +120,15 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
+		isStarted = true;
+		if(!cs.isSimulating())
+			cs.startSimulation();
+		
+		cs.update();
+		
+		if(!WaitWorld)
+			world.step(1/ 20f, 12, 4);
+		/*
 		for(int i = 0; i < stones.size() ;i++){
 			if(stones.get(i).isRemoved()){
 				stones.remove(i);
@@ -128,20 +138,20 @@ public class Main extends ApplicationAdapter {
 		
 		if(isStarted)
 			world.step(1/ 30f, 12, 4);
-		
+		*/
 		f_view.render();
 		h_view.render();
-		s_view.render();
-		i_view.render();
-		c_view.render();
-		t_dialog.render();
+		//s_view.render();
+		//i_view.render();
+		//c_view.render();
+		//t_dialog.render();
 		
 		f_view.update();
 		h_view.update();
-		s_view.update();
-		i_view.update();
-		c_view.update();
-		t_dialog.update();
+		//s_view.update();
+		//i_view.update();
+		//c_view.update();
+		//t_dialog.update();
 		//cs.update();
 		
 		

@@ -7,4 +7,5 @@ public class Strategy_support {
 	public boolean pIsfloat = false;
 	
 	public int angle;
+	public float x;
 }

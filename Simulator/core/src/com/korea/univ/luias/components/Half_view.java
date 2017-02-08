@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.korea.univ.luias.Main;
+import com.korea.univ.luias.components.system.strategy.TempThread;
 import com.korea.univ.luias.objects.Stone;
 
 public class Half_view extends View {
@@ -312,7 +313,7 @@ public class Half_view extends View {
 		stage.draw();
 
 		shaperenderer.begin(ShapeType.Filled);
-
+		/*
 		if (Main.isStarted) {
 			if (Main.stones.size() > 0) {
 				if (!Main.stones.get(Main.stones.size() - 1).waitThis()) {
@@ -328,6 +329,10 @@ public class Half_view extends View {
 				shaperenderer.rectLine(dX[0], dY[0], dX[2], dY[2], 0.05f);
 			}
 		}
+		*/
+		shaperenderer.setColor(Color.RED);
+		shaperenderer.circle(TempThread.p.getX(), ground_height - (42.34f - TempThread.p.getY()), 0.2f);
+		
 		shaperenderer.end();
 
 	}

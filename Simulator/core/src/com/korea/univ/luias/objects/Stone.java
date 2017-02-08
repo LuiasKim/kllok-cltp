@@ -145,7 +145,6 @@ public class Stone extends Phys_Object {
 		this(world, x, y, team, texture, power, angle, curl, width, height, num);
 
 		this.setType(type);
-		System.out.println(type);
 	}
 
 	public Stone(World world, float x, float y, int team, int num) {
@@ -182,7 +181,6 @@ public class Stone extends Phys_Object {
 		this(world, x, y, team, num);
 
 		this.setType(type);
-		System.out.println(type);
 	}
 
 	public Stone(World world, float x, float y, int team, int num, float power, float angle, int curl) {
@@ -219,14 +217,14 @@ public class Stone extends Phys_Object {
 		switch (curl) {
 		case 1:
 			body.setAngularVelocity(10f);
-			curlV = 0.03f;
+			curlV = Float.MIN_VALUE;
 			break;
 		case 0:
 			curlV = 0.0f;
 			break;
 		case -1:
 			body.setAngularVelocity(-10f);
-			curlV = -0.03f;
+			curlV = -Float.MIN_VALUE;
 			break;
 		}
 
@@ -245,7 +243,6 @@ public class Stone extends Phys_Object {
 		this(world, x, y, team, num, power, angle, curl);
 
 		this.setType(type);
-		System.out.println(type);
 	}
 
 	@Override
@@ -274,7 +271,7 @@ public class Stone extends Phys_Object {
 			if (!isStop) {
 				curl = body.getLinearVelocity().nor();
 				curl = curl.rotate(90);
-				curl = new Vector2(curl.x * curlV, 0);
+				curl = new Vector2((curl.x*curlV)*((0.5f+curl.y)/(1+curl.y)), 0);
 				body.applyForceToCenter(curl, false);
 			}
 

@@ -9,6 +9,8 @@ public class Strategy_parameter {
 	int situation;
 	Strategy_support support;
 	
+	float x, y;
+	
 	public Strategy_parameter(){
 		
 	}
@@ -25,6 +27,14 @@ public class Strategy_parameter {
 	public Strategy_parameter(float angle, float power, int curl, int situation, Strategy_support support){
 		this(angle,power,curl,situation);
 		this.support = support;
+	}
+	
+	public Strategy_parameter(float angle, float power, int curl, int situation, Strategy_support support, float x, float y){
+		this(angle,power,curl,situation,support);
+		
+		this.x = x;
+		this.y = y;
+		
 	}
 	
 	public float getAngle(){
@@ -61,5 +71,9 @@ public class Strategy_parameter {
 	
 	public Strategy_support getSupport(){
 		return support;
+	}
+	
+	public float getX(){
+		return x;
 	}
 }
